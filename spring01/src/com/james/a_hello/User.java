@@ -15,5 +15,15 @@ public class User {
 	public void setName(String name) {
 		this.name = name;
 	}
-	
+	public User() {
+		super();
+		// TODO Auto-generated constructor stub
+		System.out.println("user创建");
+	}
+	public void init(){
+		System.out.println("user初始化");
+	}
+	public void destroy(){
+		System.out.println("user销毁");
+	}
 }

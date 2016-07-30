@@ -28,4 +28,13 @@ public class App {
 		User user = (User) ac.getBean("user");
 		System.out.println(user);
 	}
+	@Test
+	public void testBean(){
+		//使用ApplicationContext的实现类,因为要调用其中的销毁方法
+		ClassPathXmlApplicationContext cpxac = new ClassPathXmlApplicationContext("com/james/a_hello/applicationContext.xml");
+		System.out.println("容器创建");
+		cpxac.getBean("user");
+		
+		cpxac.destroy();
+	}
 }
