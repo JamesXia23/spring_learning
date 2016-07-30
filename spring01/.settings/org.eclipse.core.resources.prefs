@@ -1,3 +1,6 @@
 eclipse.preferences.version=1
 encoding//src/com/james/a_hello/App.java=UTF-8
 encoding//src/com/james/a_hello/User.java=UTF-8
+encoding//src/com/james/b_createobj/App.java=UTF-8
+encoding//src/com/james/b_createobj/User.java=UTF-8
+encoding//src/com/james/b_createobj/UserFactory.java=UTF-8

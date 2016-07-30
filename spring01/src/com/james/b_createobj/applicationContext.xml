@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd">
+        
+        <!-- 无参数构造 -->
+        <bean id="user" class="com.james.b_createobj.User"></bean>
+		<!-- 带参数构造 -->
+			<!-- 直接给值 -->
+			<bean id="user1" class="com.james.b_createobj.User">
+				<constructor-arg type="int" value="100"></constructor-arg>
+			</bean>
+			<!-- 引用其他Bean作为参数 -->
+			<bean id="name" class="java.lang.String">
+				<constructor-arg value="xia"></constructor-arg>
+			</bean>
+			<bean id="user2" class="com.james.b_createobj.User">
+				<!-- 参数顺序默认不能相反,除非加了index控制 -->
+				<constructor-arg index="1" type="java.lang.String" ref="name"></constructor-arg>
+				<constructor-arg index="0" type="int" value="10"></constructor-arg>
+			</bean>
+		<!-- 工厂创建对象 -->
+			<!-- 非静态方法创建 -->
+			<bean id="factory" class="com.james.b_createobj.UserFactory"></bean>
+			<bean id="user3" factory-bean="factory" factory-method="getInstance"></bean>
+			<!-- 静态方法创建(难点) -->
+			<!-- 
+				class:指定工厂类型
+				factory-method:指定静态方法
+			 -->
+			<bean id="user4" class="com.james.b_createobj.UserFactory" factory-method="getStaticInstance"></bean>	
+</beans>
