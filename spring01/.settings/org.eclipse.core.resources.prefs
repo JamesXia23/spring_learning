@@ -4,3 +4,7 @@ encoding//src/com/james/a_hello/User.java=UTF-8
 encoding//src/com/james/b_createobj/App.java=UTF-8
 encoding//src/com/james/b_createobj/User.java=UTF-8
 encoding//src/com/james/b_createobj/UserFactory.java=UTF-8
+encoding//src/com/james/c_property/App.java=UTF-8
+encoding//src/com/james/c_property/UserAction.java=UTF-8
+encoding//src/com/james/c_property/UserDao.java=UTF-8
+encoding//src/com/james/c_property/UserService.java=UTF-8

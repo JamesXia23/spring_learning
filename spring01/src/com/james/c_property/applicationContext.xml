@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd">
+        
+        
+        <!-- 构造注入:参考b_create -->
+        
+        <!-- set方法注入 -->
+        <bean id="userDao" class="com.james.c_property.UserDao"></bean>
+        <bean id="userService" class="com.james.c_property.UserService">
+			<property name="userDao" ref="userDao"></property>        
+        </bean>
+        <bean id="userAction" class="com.james.c_property.UserAction">
+        	<property name="userService" ref="userService"></property>
+        </bean>
+        
+        <!-- 内部Bean -->
+        <bean id="userAction1" class="com.james.c_property.UserAction">
+        	<property name="userService">
+        		<bean id="userService1" class="com.james.c_property.UserService">
+        			<property name="userDao">
+        				<bean id="userDao1" class="com.james.c_property.UserDao"></bean>
+        			</property>
+        		</bean>
+        	</property>
+        </bean>
+        
+        <!-- p名称空间,实际上还是用set方法 -->
+        <bean id="userDao2" class="com.james.c_property.UserDao">
+        	<constructor-arg type="int" value="2"></constructor-arg>
+        </bean>
+        <bean id="userService2" class="com.james.c_property.UserService" p:userDao-ref="userDao2"></bean>
+        <bean id="userAction2" class="com.james.c_property.UserAction" p:userService-ref="userService2"></bean>
+        
+        <!-- 自动装配 -->
+        <bean id="userDao3" class="com.james.c_property.UserDao">
+        	<constructor-arg type="int" value="3"></constructor-arg>
+        </bean>
+        <!-- autowire="byName"会去找与属性名同名的bean注入,所以只会找到上面的userDao和userService两个bean -->
+        <bean id="UserService3" class="com.james.c_property.UserService" autowire="byName"></bean>
+        <bean id="UserAction3" class="com.james.c_property.UserAction" autowire="byName"></bean>
+        <!-- autowire="byType"会去找与属性相同类型的bean注入,此时要保证ioc容器中只有1个该类型的bean,否则就会报错 -->
+        
+        <!-- 注解注入
+        	1.引入context名称空间:xmlns:context="http://www.springframework.org/schema/context"
+        	2.开启注解扫描
+        	3.使用注解
+         -->
+         <context:component-scan base-package="com.james.c_property"></context:component-scan>
+</beans>
