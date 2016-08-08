@@ -26,4 +26,5 @@ public class User {
 	public void destroy(){
 		System.out.println("user销毁");
 	}
+	
 }
