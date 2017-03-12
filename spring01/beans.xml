@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans  http://www.springframework.org/schema/beans/spring-beans-4.3.xsd  http://www.springframework.org/schema/context  http://www.springframework.org/schema/context/spring-context-4.3.xsd">
+	<context:component-scan base-package="org.bdi.dsw.controller" />
+	<bean
+		class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
+		<property name="messageConverters">
+			<list>
+				<ref bean="stringHttpMessageConverter" />
+				<bean
+					class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter" />
+			</list>
+		</property>
+	</bean>
+	<bean class="org.springframework.http.converter.StringHttpMessageConverter"
+		id="stringHttpMessageConverter">
+		<property name="supportedMediaTypes">
+			<list>
+				<value>application/json;charset=UTF-8</value>
+			</list>
+		</property>
+	</bean>
+	<bean class="com.alibaba.druid.pool.DruidDataSource"
+		destroy-method="close" id="hiveDataSource" init-method="init">
+		<property name="url"
+			value="jdbc:hive2://172.31.238.141:21050/;auth=noSasl" />
+		<property name="username" value="" />
+		<property name="password" value="" />
+		<property name="driverClassName" value="org.apache.hive.jdbc.HiveDriver" />
+		<property name="initialSize" value="25" />
+		<property name="maxActive" value="50" />
+		<property name="minIdle" value="25" />
+		<property name="maxWait" value="10000" />
+		<property name="timeBetweenEvictionRunsMillis" value="60000" />
+		<property name="minEvictableIdleTimeMillis" value="300000" />
+		<property name="validationQuery" value="SELECT 'x' from dual" />
+		<property name="testWhileIdle" value="true" />
+		<property name="testOnBorrow" value="false" />
+		<property name="testOnReturn" value="false" />
+		<property name="poolPreparedStatements" value="true" />
+		<property name="maxPoolPreparedStatementPerConnectionSize"
+			value="100" />
+	</bean>
+	<bean class="com.alibaba.druid.pool.DruidDataSource"
+		destroy-method="close" id="oracleDataSource" init-method="init">
+		<property name="url" value="jdbc:oracle:thin:@172.31.238.158:1525:orcl" />
+		<property name="username" value="hpdm" />
+		<property name="password" value="hpdm0123" />
+		<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver" />
+		<property name="initialSize" value="25" />
+		<property name="maxActive" value="50" />
+		<property name="minIdle" value="25" />
+		<property name="maxWait" value="10000" />
+		<property name="timeBetweenEvictionRunsMillis" value="60000" />
+		<property name="minEvictableIdleTimeMillis" value="300000" />
+		<property name="validationQuery" value="SELECT 'x' from dual" />
+		<property name="testWhileIdle" value="true" />
+		<property name="testOnBorrow" value="false" />
+		<property name="testOnReturn" value="false" />
+		<property name="poolPreparedStatements" value="true" />
+		<property name="maxPoolPreparedStatementPerConnectionSize"
+			value="100" />
+	</bean>
+	<bean class="org.bdi.dsw.proxy.DataSourceProxy" id="hiveDataSourceProxy">
+		<constructor-arg ref="hiveDataSource"
+			type="com.alibaba.druid.pool.DruidDataSource" />
+	</bean>
+	<bean class="org.bdi.dsw.proxy.DataSourceProxy" id="oracleDataSourceProxy">
+		<constructor-arg ref="oracleDataSource"
+			type="com.alibaba.druid.pool.DruidDataSource" />
+	</bean>
+	<bean class="org.bdi.dsw.dao.DSWDao" id="hiveDBDao">
+		<constructor-arg ref="hiveDataSourceProxy"
+			type="org.bdi.dsw.proxy.DataSourceProxy" />
+	</bean>
+	<bean class="org.bdi.dsw.dao.DSWDao" id="oracleDBDao">
+		<constructor-arg ref="oracleDataSourceProxy"
+			type="org.bdi.dsw.proxy.DataSourceProxy" />
+	</bean>
+	<beans profile="1_1">
+		<bean class="org.bdi.dsw.domain.DSWConfig" id="servConf">
+			<constructor-arg type="String" value="1" />
+			<constructor-arg type="String" value="1" />
+			<constructor-arg type="String"
+				value="jdbc:oracle:thin:@172.31.238.158:1525:orcl" />
+			<constructor-arg type="String"
+				value="oracle.jdbc.driver.OracleDriver" />
+			<constructor-arg type="String" value="hpdm" />
+			<constructor-arg type="String" value="hpdm0123" />
+			<constructor-arg type="String" value="oracle" />
+			<constructor-arg type="String" value="MA_DEMO" />
+			<constructor-arg type="String"
+				value="select MEAN10,MEAN25,UPPER_BOUND,LOWER_BOUND,CM_NAME from MA_DEMO where TO_CHAR(TEST_TIME,'YYYYMMDD')='{TEST_TIME}' and VENDOR='{VENDOR}' and CM_NAME='{CM_NAME}' and BOM='{BOM}'" />
+			<constructor-arg ref="oracleDBDao" type="org.bdi.dsw.dao.DSWDao" />
+		</bean>
+	</beans>
+	<beans profile="1_2">
+		<bean class="org.bdi.dsw.domain.DSWConfig" id="servConf">
+			<constructor-arg type="String" value="1" />
+			<constructor-arg type="String" value="2" />
+			<constructor-arg type="String"
+				value="jdbc:oracle:thin:@172.31.238.158:1525:orcl" />
+			<constructor-arg type="String"
+				value="oracle.jdbc.driver.OracleDriver" />
+			<constructor-arg type="String" value="hpdm" />
+			<constructor-arg type="String" value="hpdm0123" />
+			<constructor-arg type="String" value="oracle" />
+			<constructor-arg type="String" value="MA_DEMO" />
+			<constructor-arg type="String"
+				value="select MEAN10,MEAN25,UPPER_BOUND,LOWER_BOUND,VENDOR,TEST_TIME from MA_DEMO where TO_CHAR(TEST_TIME,'YYYYMMDD')='{TEST_TIME}' and VENDOR in ({IN_STR_VENDOR}) and CM_NAME='{CM_NAME}' and BOM='{BOM}'" />
+			<constructor-arg ref="oracleDBDao" type="org.bdi.dsw.dao.DSWDao" />
+		</bean>
+	</beans>
+	<beans profile="1_3">
+		<bean class="org.bdi.dsw.domain.DSWConfig" id="servConf">
+			<constructor-arg type="String" value="1" />
+			<constructor-arg type="String" value="3" />
+			<constructor-arg type="String"
+				value="jdbc:hive2://172.31.238.141:21050/;auth=noSasl" />
+			<constructor-arg type="String"
+				value="org.apache.hive.jdbc.HiveDriver" />
+			<constructor-arg type="String" value="" />
+			<constructor-arg type="String" value="" />
+			<constructor-arg type="String" value="hive" />
+			<constructor-arg type="String" value="user_month_power" />
+			<constructor-arg type="String"
+				value="select * from sg_dw.user_month_power where id in ({id}) and year in ({year}) and month in ({month})" />
+			<constructor-arg ref="hiveDBDao" type="org.bdi.dsw.dao.DSWDao" />
+		</bean>
+	</beans>
+	<beans profile="1_4">
+		<bean class="org.bdi.dsw.domain.DSWConfig" id="servConf">
+			<constructor-arg type="String" value="1" />
+			<constructor-arg type="String" value="4" />
+			<constructor-arg type="String"
+				value="jdbc:hive2://172.31.238.141:21050/;auth=noSasl" />
+			<constructor-arg type="String"
+				value="org.apache.hive.jdbc.HiveDriver" />
+			<constructor-arg type="String" value="" />
+			<constructor-arg type="String" value="" />
+			<constructor-arg type="String" value="hive" />
+			<constructor-arg type="String" value="user_power_data_3" />
+			<constructor-arg type="String"
+				value="select power from sg_dw.user_power_3_new where regexp_replace(to_date(time),'[-]','')='{datetime}' and id={id}" />
+			<constructor-arg ref="hiveDBDao" type="org.bdi.dsw.dao.DSWDao" />
+		</bean>
+	</beans>
+	<beans profile="1_5">
+		<bean class="org.bdi.dsw.domain.DSWConfig" id="servConf">
+			<constructor-arg type="String" value="1" />
+			<constructor-arg type="String" value="5" />
+			<constructor-arg type="String"
+				value="jdbc:hive2://172.31.238.141:21050/;auth=noSasl" />
+			<constructor-arg type="String"
+				value="org.apache.hive.jdbc.HiveDriver" />
+			<constructor-arg type="String" value="" />
+			<constructor-arg type="String" value="" />
+			<constructor-arg type="String" value="hive" />
+			<constructor-arg type="String" value="user_power_3" />
+			<constructor-arg type="String"
+				value="select * from sg_dw.user_power_3 where regexp_replace(to_date(time),'[-]','')='{datetime}' and id={id} order by time" />
+			<constructor-arg ref="hiveDBDao" type="org.bdi.dsw.dao.DSWDao" />
+		</bean>
+	</beans>
+</beans>
